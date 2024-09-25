@@ -116,7 +116,7 @@
         </ul>
         <ul class="space-y-4 mx-auto">
             <li>
-                <a wire:navigate href="/kom"
+                <a wire:navigate href="/"
                     class="flex items-center p-4 text-white hover:bg-blue-500 active:bg-blue-700">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">
