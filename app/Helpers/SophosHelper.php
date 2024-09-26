@@ -48,7 +48,7 @@ class SophosHelper
                 'id_tenant' => $requestWhoAmI->json()['id'],
             ], [
                 'id_tenant' => $requestWhoAmI->json()['id'],
-                'type' => $requestWhoAmI->json()['type'],
+                'type' => $requestWhoAmI->json()['idType'],
                 'api_host' => $requestWhoAmI->json()['apiHosts'],
             ]);
         }

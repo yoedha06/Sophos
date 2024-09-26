@@ -14,7 +14,7 @@ class IndexComputer extends Component
         return (new SophosHelper())->getEndpoint()->json();
     }
 
-    public function fetch()
+    public function fecth()
     {
         $this->fecthComputer();
     }
