@@ -37,7 +37,7 @@ class IndexPolicies extends Component
 
     public function fecth()
     {
-        $this->fecthSettingPolicy();
+        $this->fecthPolicySetting();
         $this->fecthPolicies();
     }
     public function render()
