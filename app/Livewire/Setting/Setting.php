@@ -45,6 +45,8 @@ class Setting extends Component
             SettingHelper::setByKey($key, $value);
         }
 
+        $this->fecthTenant();
+
         if($this->fecthTenant()){
             session()->flash('success', 'Credentials saved successfully');
             $this->redirectRoute('setting', navigate: true);

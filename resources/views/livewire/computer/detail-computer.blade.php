@@ -7,18 +7,18 @@
                         class="flex items-center py-2 px-4 font-semibold text-sm text-white bg-blue-600 border-blue-600 rounded-l">
                         <i class="fa-solid fa-circle-info"></i>&nbsp;Summary
                     </button>
-                    <a wire:navigate  href="/events/{{ $computer->id_computer }}" id="tab-events" onclick="setActiveTab('events')"
+                    <a wire:navigate href="/events/{{ $computer->id_computer }}" id="tab-events" onclick="setActiveTab('events')"
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-l focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-calendar-days"></i>&nbsp;Events
                     </a>
-                    <button id="tab-status" onclick="setActiveTab('status')"
+                    <a wire:navigate href="/status/{{ $computer->id_computer }}" id="tab-status" onclick="setActiveTab('status')"
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-circle-check"></i>&nbsp;Status
-                    </button>
-                    <button id="tab-policies" onclick="setActiveTab('policies')"
+                    </a>
+                    <a wire:navigate href="/policies/{{ $computer->id_computer }}" id="tab-policies" onclick="setActiveTab('policies')"
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-shield-halved"></i>&nbsp;Policies
-                    </button>
+                    </a>
                     <button type="button" wire:click="fecth" class="flex items ml-2 mx-auto  text-white text-sm px-5 py-2.5 text-center me-2 bg-blue-800 rounded" wire:loading.remove>Syncronize</button>
 
                     <button disabled wire:loading.class="cursor-not-allowed" type="button" class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center" wire:loading>
@@ -118,56 +118,61 @@
                 <tbody>
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="px-6 py-4 font-medium text-blue-500 whitespace-nowrap dark:text-white">
-                            Core Agent
+                            {{ $computer->assigned_products[3]['code'] }}
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             <i class="fa-solid fa-check" style="color: #00a82a;"></i>
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            2024.2.3.4.0
+                            {{ $computer->assigned_products[3]['version'] }}
                         </td>
                     </tr>
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="px-6 py-4 font-medium text-blue-500 whitespace-nowrap dark:text-white">
-                            Core Agent
+                            {{ $computer->assigned_products[2]['code'] }}
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             <i class="fa-solid fa-check" style="color: #00a82a;"></i>
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            2024.2.3.4.0
+                            {{ $computer->assigned_products[2]['version'] }}
                         </td>
                     </tr>
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="px-6 py-4 font-medium text-blue-500 whitespace-nowrap dark:text-white">
-                            Core Agent
+                            {{ $computer->assigned_products[1]['code'] }}
+
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             <i class="fa-solid fa-check" style="color: #00a82a;"></i>
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            2024.2.3.4.0
+                            {{ $computer->assigned_products[1]['version'] }}
                         </td>
                     </tr>
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="px-6 py-4 font-medium text-blue-500 whitespace-nowrap dark:text-white">
-                            Core Agent
+                            {{ $computer->assigned_products[4]['code'] }}
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             <i class="fa-solid fa-check" style="color: #00a82a;"></i>
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            2024.2.3.4.0
+                            {{ $computer->assigned_products[4]['version'] }}
                         </td>
                     </tr>
                 </tbody>
                 </table>
                 <span class="p-5"><i class="fa-solid fa-xs fa-chevron-right"></i><span class="text-sm font-semibold ml-5">Installed component version</span></span>
                 <div class="p-2">
-                    <span class="text-sm">test 2/test</span>
+                    @if(!empty($computer->group['name']))
+                        {{ $computer->group['name'] }}
+                    @else
+                        -
+                    @endif
                 </div>
                 <div class="pl-2">
-                    <span class="text-sm">Windows 10 Home</span>
+                    <span class="text-sm">{{ $computer->operating_system['name'] }}</span>
                 </div>
                 <div class="p-2 mb-9">
                     <span class="text-sm">x64</span>

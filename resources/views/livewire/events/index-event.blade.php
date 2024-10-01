@@ -12,21 +12,23 @@
                         class="flex items-center py-2 px-4 font-semibold text-sm text-white bg-blue-600 border-blue-600">
                         <i class="fa-solid fa-calendar-days"></i>&nbsp;Events
                     </button>
-                    <button id="tab-status" onclick="setActiveTab('status')"
+                    <a wire:navigate href="/status/{{ $computer->id_computer }}" id="tab-status" onclick="setActiveTab('status')"
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-circle-check"></i>&nbsp;Status
-                    </button>
-                    <button id="tab-policies" onclick="setActiveTab('policies')"
+                    </a>
+                    <a wire:navigate href="/policies/{{ $computer->id_computer }}" id="tab-policies" onclick="setActiveTab('policies')"
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-shield-halved"></i>&nbsp;Policies
-                    </button>
+                    </a>
+                    
                     <button type="button" wire:click="fecth"
-                        class="flex items ml-2 mx-auto  text-white text-sm px-5 py-2.5 text-center me-2 bg-blue-800 rounded"
-                        wire:loading.remove>Syncronize</button>
-
+                        class="flex items ml-2 mx-auto text-white text-sm px-5 py-2.5 text-center me-2 bg-blue-800 rounded"
+                        wire:loading.remove wire:target="fecth">
+                        Syncronize
+                    </button>
                     <button disabled wire:loading.class="cursor-not-allowed" type="button"
                         class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-                        wire:loading>
+                        wire:loading wire:target="fecth">
                         <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin"
                             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -53,8 +55,6 @@
                     'flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400';
                 document.getElementById('tab-policies').className =
                     'flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400';
-
-                // Set the active tab's button
                 document.getElementById(`tab-${tab}`).className =
                     'flex items-center py-1 px-4 m-1 font-semibold text-sm text-white bg-blue-600 border-blue-600 focus:outline-none';
             }
@@ -65,40 +65,26 @@
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-t">
             <thead class="bg-white border-b">
                 <tr>
-                    <th scope="col " class="px-2 py-3">
-                        <div id="date-range-picker" date-rangepicker class="flex items-center">
-                            <div class="relative">
-                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                    </svg>
+                    <th scope="col" class="px-2 py-3">
+                        <form wire:submit.prevent="filterByDateRange">
+                            <div id="date-range-picker" class="flex items-center">
+                                <span class="mx-2 text-gray-500">from</span>
+                                <div class="relative">
+                                    <input id="datepicker-range-start" wire:model="startDate" type="date"
+                                        class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Select date start">
                                 </div>
-                                <input id="datepicker-range-start" name="start" type="text"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Select date start">
-                            </div>
-                            <span class="mx-4 text-gray-500">to</span>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                    </svg>
+                                <span class="mx-2 text-gray-500">to</span>
+                                <div class="relative">
+                                    <input wire:model="endDate" type="date"
+                                        class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Select date end">
                                 </div>
-                                <input id="datepicker-range-end" name="end" type="text"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Select date end">
+                                <button type="submit" class="ml-4 bg-blue-700 hover:bg-blue-900 text-white py-2 px-4 rounded">
+                                    <i class="fas fa-filter"></i>&nbsp;Filter
+                                </button>
                             </div>
-                            {{-- <select id="perPage" class="ml-2 border-gray-300 bg-gray-100 rounded float-end">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                            </select> --}}
-                        </div>
+                        </form>                        
                     </th>
                     <th scope="col" class="px-6 py-3">
                         <h4 class="text-sm text-blue-500 float-end mt-2">View Event Report</h4>
@@ -131,7 +117,7 @@
                 @endforeach
             </tbody>
         </table>
-        <div class="mt-1 p-1">
+        <div class="mt-1 px-2 py-3">
             {{ $events->links() }}
         </div>
     </div>

@@ -13,8 +13,11 @@ use Livewire\WithPagination;
 class IndexEvent extends Component
 {
     use WithPagination;
+    public $startDate;
+    public $endDate; 
     public $id_computer;
     public Computer $computer;
+    
 
     public function mount($id_computer)
     {
@@ -26,16 +29,33 @@ class IndexEvent extends Component
     {
         return (new SophosHelper())->getEvent()->json();
     }
-
+    
     public function fecth()
     {
         $this->fecthEvent();
     }
+
+    public function filterByDateRange()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $event = Event::where('computer_id', $this->id_computer)->orderBy('event_create_at', 'desc')->paginate(5);
-        return view('livewire.events.index-event',[
-            'events' => $event,
+        $query = Event::where('computer_id', $this->id_computer);
+
+        if ($this->startDate) {
+            $query->whereDate('event_create_at', '>=', $this->startDate);
+        }
+
+        if ($this->endDate) {
+            $query->whereDate('event_create_at', '<=', $this->endDate);
+        }
+
+        $events = $query->orderBy('event_create_at', 'desc')->paginate(10);
+
+        return view('livewire.events.index-event', [
+            'events' => $events,
         ]);
     }
 }

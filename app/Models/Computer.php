@@ -15,7 +15,7 @@ class Computer extends Model
     public function casts()
     {
         return[
-            'health_service_details' => AsArrayObject::class,
+            'health_service_details' => 'array',
             'operating_system' => AsArrayObject::class,
             'ipv4_addresses' => AsArrayObject::class,
             'mac_addresses' => AsArrayObject::class,
@@ -33,13 +33,13 @@ class Computer extends Model
         return $this->belongsTo(Tenant::class);
     }
 
-    public function policies()
-    {
-        return $this->hasMany(Policy::class);
-    }
-
     public function events()
     {
         return $this->hasMany(Event::class);
+    }
+
+    public function policies()
+    {
+        return $this->belongsToMany(Policy::class, 'policy_computers', 'computer_id', 'policy_id');
     }
 }

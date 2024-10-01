@@ -1,5 +1,5 @@
 <x-layouts.sidebar-tabs id-computer="{{ $id_computer }}">
-    <div class="max-w-screen-xl mx-auto pt-2 pl-2 border-b">
+    <div class="max-w-screen-xl bg-white mx-auto pt-2 mb-8 pl-2 border-b">
         <div class="flex flex-col">
             <div>
                 <div class="flex mb-2 border-white-300">
@@ -12,15 +12,15 @@
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-l focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-calendar-days"></i>&nbsp;Events
                     </a>
-                    <a wire:navigate href="/status/{{ $computer->id_computer }}" id="tab-status" onclick="setActiveTab('status')"
-                        class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
+                    <button id="tab-status" onclick="setActiveTab('status')"
+                        class="flex items-center py-2 px-4 font-semibold text-sm text-white bg-blue-600 border-blue-600">
                         <i class="fa-solid fa-circle-check"></i>&nbsp;Status
-                    </a>
-                    <button id="tab-policies" onclick="setActiveTab('policies')"
-                        class="flex items-center py-2 px-4 font-semibold text-sm text-white bg-blue-600 border-blue-60">
-                        <i class="fa-solid fa-shield-halved"></i>&nbsp;Policies
                     </button>
-                    
+                    <a wire:navigate href="/policies/{{ $computer->id_computer }}" id="tab-policies" onclick="setActiveTab('policies')"
+                        class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
+                        <i class="fa-solid fa-shield-halved"></i>&nbsp;Policies
+                    </a>
+
                     <button type="button" wire:click="fecth"
                         class="flex items ml-2 mx-auto text-white text-sm px-5 py-2.5 text-center me-2 bg-blue-800 rounded"
                         wire:loading.remove wire:target="fecth">
@@ -59,39 +59,58 @@
                     'flex items-center py-1 px-4 m-1 font-semibold text-sm text-white bg-blue-600 border-blue-600 focus:outline-none';
             }
         </script>
-
     </div>
-    <div class="max-w-screen-xl">
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-t">
-            <thead class="bg-white">
-                <tr>
-                    <th class="px-2 py-3 text-sm font-normal">
-                        <i class="fa-solid fa-xl fa-circle-info"></i>&nbsp;Policies below apply to {{ $computer->hostname }}
-                    </th>
-                </tr>
-            </thead>
-        </table>
-        <div class="px-4 py-2">
-            <table class="w-full border-t-4 border-l-2 border-b-2 px-5 py-1 text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-md text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">
-                            Type
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Name
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="text-md text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-400 border-">
-                    @foreach ($policies as $policy)
-                        <tr class="border-b border-r">
-                            <td scope="col" class="px-6 py-3">Endpoint Protection: {{ $policy->type }}</td>
-                            <td scope="col" class="px-6 py-3"><a href="" class="text-blue-600">{{ $policy->name }}</a></td>
-                        </tr>
-                    @endforeach
-                </tbody>                
-            </table>
+    <div class="max-w-screen-xl ml-5">
+        <span class="text-xl ml-5 mt-32 py-4 mb-5">Security Health</span>
+        <div class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <div x-data="{ open: true }" class="rounded-md p-2">
+                <div>
+                    <button @click="open = !open" class="flex items-center justify-between w-full py-2 text-left text-md font-semibold focus:outline-none focus:ring hover:bg-gray-200 rounded-md px-2">
+                        <span class="flex items-center">
+                            <svg x-show="!open" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                            <svg x-show="open" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            <i class="fa-solid fa-circle-check" style="color: #00d103;"></i>&nbsp; Security Health
+                        </span>
+                    </button>
+                    <div x-show="open" x-transition class="mt-2">
+                        <ul class="list-none list-inside text-sm ml-5">
+                            <li class="hover:bg-gray-200 rounded-md p-2">-</li>
+                            <li class="hover:bg-gray-200 rounded-md p-2">-</li>
+                        </ul>
+        
+                        <!-- Nested Accordion -->
+                        <div x-data="{ openNested: true }" class="ml-5 p-4">
+                            <button @click="openNested = !openNested" class="flex items-center justify-between w-full py-2 text-left text-md font-semibold focus:outline-none focus:ring hover:bg-gray-200 rounded-md px-2">
+                                <span class="flex items-center">
+                                    <svg x-show="!openNested" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                    <svg x-show="openNested" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                    <i class="fa-solid fa-circle-check" style="color: #00d103;"></i>&nbsp; Sophos Services Running
+                                </span>
+                            </button>
+                            <div x-show="openNested" x-transition class="mt-2 ml-6">
+                                @foreach($healthServices as $service)
+                                    <li class="flex items-center hover:bg-gray-200 rounded-md p-2">
+                                        @if($service['status'] === 'running')
+                                        <i class="fa-solid fa-circle-check" style="color: #00d103;"></i>&nbsp;
+                                        @endif
+                                        {{ $service['name'] }}
+                                    </li>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <span class="text-xl ml-5 mt-32 py-4 mb-5">Alerts</span><br>
+        <span class="text-sm ml-5 mt-32 py-4 mb-5">No Alerts</span>
     </div>
 </x-layouts.sidebar-tabs>

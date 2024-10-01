@@ -16,8 +16,11 @@ class PolicySetting extends Model
     {
         return[
             'default_value' => AsArrayObject::class,
+            'allowed_value' => AsArrayObject::class,
+            'limit' => AsArrayObject::class,
             'default_unit' => AsArrayObject::class,
-            'allowed_units' => AsArrayObject::class,
+            'allowed_unit' => AsArrayObject::class,
+            'allowed_format' => AsArrayObject::class,
             'examples' => AsArrayObject::class,
         ];
     }
