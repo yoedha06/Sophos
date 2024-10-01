@@ -6,13 +6,16 @@ use App\Helpers\SophosHelper;
 use App\Models\Computer;
 use App\Models\Event;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 class IndexEvent extends Component
 {
+    
     use WithPagination;
+    #[Title('Events')]
     public $startDate;
     public $endDate; 
     public $id_computer;

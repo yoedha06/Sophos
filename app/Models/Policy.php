@@ -28,12 +28,7 @@ class Policy extends Model
     {
         return $this->belongsTo(PolicySetting::class, 'type_policy', 'type');
     }
-
-    // public function computer()
-    // {
-    //     return $this->belongsTo(Computer::class);
-    // }
-
+    
     public function computers()
     {
         return $this->belongsToMany(Computer::class, 'policy_computers', 'policy_id', 'computer_id');

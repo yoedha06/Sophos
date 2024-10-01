@@ -5,11 +5,13 @@ namespace App\Livewire\Status;
 use App\Helpers\SophosHelper;
 use App\Models\Computer;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 class IndexStatus extends Component
 {
+    #[Title('Status')]
     public $id_computer;
     public Computer $computer;
     public $healthServices = [];

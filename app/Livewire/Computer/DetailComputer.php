@@ -5,10 +5,14 @@ namespace App\Livewire\Computer;
 use App\Helpers\SophosHelper;
 use App\Models\Computer;
 use App\Models\Event;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
+#[Layout('components.layouts.app')]
 class DetailComputer extends Component
 {
+    #[Title('Computer Detail')]
     public $id_computer;
     public Computer $computer;
     public function mount($id_computer)

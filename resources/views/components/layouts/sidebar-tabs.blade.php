@@ -38,7 +38,7 @@
             </h5>
             <h5 class="text-xs mb-4">Last User: - </h5>
             <h5 class="text-xs text-blue-600 mb-4">Admin Isolate</h5>
-            <button class="mx-auto w-full p-1 mb-1 text-xs font-semibold text-white bg-blue-800 rounded">Update
+            <button class="mx-auto w-full p-1 mb-1 text-xs font-semibold text-white bg-gradient-to-l from-violet-900 to-blue-400 rounded">Update
                 Now</button>
             <button
                 class="mx-auto w-full p-1 mb-1 text-xs font-semibold text-blue-800 bg-gray-100 rounded">Delete</button>

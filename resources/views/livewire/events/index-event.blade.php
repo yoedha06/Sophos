@@ -4,31 +4,28 @@
             <div>
                 <div class="flex mb-2 border-white-300">
                     <a wire:navigate href="/details/{{ $computer->id_computer }}" id="tab-summary"
-                        onclick="setActiveTab('summary')"
-                        class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 rounded-l border-transparent focus:outline-none hover:border-gray-400"">
+                        class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gradient-to-l bg-gray-200 border-transparent rounded-l focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-circle-info"></i>&nbsp;Summary
                     </a>
-                    <button id="tab-events" onclick="setActiveTab('events')"
-                        class="flex items-center py-2 px-4 font-semibold text-sm text-white bg-blue-600 border-blue-600">
+                    <a wire:navigate href="/events/{{ $computer->id_computer }}" id="tab-events"
+                        class="flex items-center py-2 px-4 font-semibold text-sm text-white  bg-gradient-to-l from-violet-900 to-blue-400">
                         <i class="fa-solid fa-calendar-days"></i>&nbsp;Events
-                    </button>
-                    <a wire:navigate href="/status/{{ $computer->id_computer }}" id="tab-status" onclick="setActiveTab('status')"
-                        class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
+                    </a>
+                    <a wire:navigate href="/status/{{ $computer->id_computer }}" id="tab-status"
+                        class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-circle-check"></i>&nbsp;Status
                     </a>
-                    <a wire:navigate href="/policies/{{ $computer->id_computer }}" id="tab-policies" onclick="setActiveTab('policies')"
+                    <a wire:navigate href="/policies/{{ $computer->id_computer }}" id="tab-policies"
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-shield-halved"></i>&nbsp;Policies
                     </a>
-                    
                     <button type="button" wire:click="fecth"
-                        class="flex items ml-2 mx-auto text-white text-sm px-5 py-2.5 text-center me-2 bg-blue-800 rounded"
-                        wire:loading.remove wire:target="fecth">
-                        Syncronize
-                    </button>
+                        class="flex items ml-2 mx-auto  text-white text-sm px-5 py-2.5 text-center me-2 bg-gradient-to-l from-violet-900 to-blue-400 rounded"
+                        wire:loading.remove>Syncronize</button>
+
                     <button disabled wire:loading.class="cursor-not-allowed" type="button"
-                        class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-                        wire:loading wire:target="fecth">
+                        class="ml-2 text-white bg-gradient-to-l from-violet-900 to-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+                        wire:loading>
                         <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin"
                             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -42,83 +39,67 @@
                     </button>
                 </div>
             </div>
+
         </div>
-
-        <script>
-            function setActiveTab(tab) {
-                // Reset all buttons to inactive
-                document.getElementById('tab-summary').className =
-                    'flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400';
-                document.getElementById('tab-events').className =
-                    'flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400';
-                document.getElementById('tab-status').className =
-                    'flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400';
-                document.getElementById('tab-policies').className =
-                    'flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400';
-                document.getElementById(`tab-${tab}`).className =
-                    'flex items-center py-1 px-4 m-1 font-semibold text-sm text-white bg-blue-600 border-blue-600 focus:outline-none';
-            }
-        </script>
-
-    </div>
-    <div class="max-w-screen-xl">
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-t">
-            <thead class="bg-white border-b">
-                <tr>
-                    <th scope="col" class="px-2 py-3">
-                        <form wire:submit.prevent="filterByDateRange">
-                            <div id="date-range-picker" class="flex items-center">
-                                <span class="mx-2 text-gray-500">from</span>
-                                <div class="relative">
-                                    <input id="datepicker-range-start" wire:model="startDate" type="date"
-                                        class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Select date start">
+        <div class="max-w-screen-xl">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-t">
+                <thead class="bg-white border-b">
+                    <tr>
+                        <th scope="col" class="px-2 py-3">
+                            <form wire:submit.prevent="filterByDateRange">
+                                <div id="date-range-picker" class="flex items-center">
+                                    <span class="mx-2 text-gray-500">from</span>
+                                    <div class="relative">
+                                        <input id="datepicker-range-start" wire:model="startDate" type="date"
+                                            class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            placeholder="Select date start">
+                                    </div>
+                                    <span class="mx-2 text-gray-500">to</span>
+                                    <div class="relative">
+                                        <input wire:model="endDate" type="date"
+                                            class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            placeholder="Select date end">
+                                    </div>
+                                    <button type="submit"
+                                        class="ml-4 bg-violet-900 text-white py-2 px-4 rounded">
+                                        <i class="fas fa-filter"></i>&nbsp;Filter
+                                    </button>
                                 </div>
-                                <span class="mx-2 text-gray-500">to</span>
-                                <div class="relative">
-                                    <input wire:model="endDate" type="date"
-                                        class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Select date end">
-                                </div>
-                                <button type="submit" class="ml-4 bg-blue-700 hover:bg-blue-900 text-white py-2 px-4 rounded">
-                                    <i class="fas fa-filter"></i>&nbsp;Filter
-                                </button>
-                            </div>
-                        </form>                        
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        <h4 class="text-sm text-blue-500 float-end mt-2">View Event Report</h4>
-                    </th>
-                </tr>
-            </thead>
-        </table>
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-md text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th scope="col" class="w-9/10 px-6 py-3">
-                        Date
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Event
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="text-xs text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-400">
-                @foreach ($events as $event)
-                    <tr
-                        class="text-sm border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ carbon\Carbon::parse($event->event_create_at)->format('M d, Y h:i A') }}
-                        </td>
-                        <td class="px-8 py-4">
-                            {{ $event->name }}
-                        </td>
+                            </form>
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            <h4 class="text-sm text-blue-500 float-end mt-2">View Event Report</h4>
+                        </th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="mt-1 px-2 py-3">
-            {{ $events->links() }}
+                </thead>
+            </table>
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-md text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="w-9/10 px-6 py-3">
+                            Date
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Event
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="text-xs text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-400">
+                    @foreach ($events as $event)
+                        <tr
+                            class="text-sm border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ carbon\Carbon::parse($event->event_create_at)->format('M d, Y h:i A') }}
+                            </td>
+                            <td class="px-8 py-4">
+                                {{ $event->name }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="mt-1 px-2 py-3">
+                {{ $events->links() }}
+            </div>
         </div>
-    </div>
 </x-layouts.sidebar-tabs>

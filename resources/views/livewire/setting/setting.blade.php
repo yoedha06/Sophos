@@ -10,8 +10,8 @@
                     </ul>
                     <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
                         <li>
-                            <h5 class="text text-gray-300"><span class="text-blue-600">Overview </span> /
-                                <span class="text-gray-300">Setting</span>
+                            <h5 class="text text-gray-300"><span class="text-blue-500">Overview </span> /
+                                <span class="text-gray-400">Setting</span>
                             </h5>
                         </li>
                     </ul>
@@ -47,7 +47,8 @@
                     </div>
                     <div class="mb-5">
                         <label for="client_secret" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Client Secret<span class="text-red-500">*</span>
+                            Client Secret
+                            <span class="text-red-500">*</span>
                         </label>
                         <input 
                             type="text" 
@@ -61,6 +62,5 @@
                 </form>
             </div>
         </div>
-
     </div>
 </div>

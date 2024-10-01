@@ -7,11 +7,13 @@ use App\Models\Computer;
 use App\Models\Policy;
 use App\Models\PolicyComputer;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 class IndexPolicies extends Component
 {
+    #[Title('Policies')]
     public $id_computer;
     public Computer $computer;
     public $policies = [];

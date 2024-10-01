@@ -7,11 +7,13 @@ use App\Helpers\SophosHelper;
 use App\Models\Setting as ModelsSetting;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 class Setting extends Component
 {
+    #[Title('Setting')] 
     public $clientId = '';
     public $clientSecret = '';
 
