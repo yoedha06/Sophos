@@ -19,8 +19,6 @@
                         class="flex items-center py-2 px-4 font-semibold text-sm text-white bg-gradient-to-l from-violet-900 to-blue-400 rounded-r">
                         <i class="fa-solid fa-shield-halved"></i>&nbsp;Policies
                     </a>
-                    <button type="button" wire:click="fecth" class="flex items ml-2 mx-auto  text-white text-sm px-5 py-2.5 text-center me-2 bg-gradient-to-l from-violet-900 to-blue-400 rounded" wire:loading.remove>Syncronize</button>
-
                     <button type="button" 
                         wire:click="fecth" 
                         class="flex items ml-2 mx-auto text-white text-sm px-5 py-2.5 text-center me-2 bg-gradient-to-l from-violet-900 to-blue-400 rounded" 
