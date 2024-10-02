@@ -10,5 +10,4 @@ class PolicyComputer extends Model
     use HasFactory;
 
     protected $guarded = [];
-    
 }

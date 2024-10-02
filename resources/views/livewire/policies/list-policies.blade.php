@@ -42,7 +42,7 @@
                         </form>
                     </th>
                     <th scope="col" class="px-6 py-4 float-end">
-                        <button class="bg-blue-700 py-1 px-2 rounded-lg mr-5 text-white">Add Policy</button>
+                        <a href="" wire:navigate class="bg-blue-700 py-1 px-2 rounded-lg mr-5 text-white">Add Policy</a>
                     </th>
                 </tr>
             </thead>
@@ -57,35 +57,41 @@
                     class="w-full border-t border-l border-r bg-gray-100 border-b px-5 text-sm text-left text-gray-500 dark:text-gray-400">
                     <tbody class="text-md text-white bg-gradient-to-r from-violet-900 to-blue-400 dark:bg-gray-700 dark:text-gray-400">
                         <tr class="text-md">
-                            <td class="px-5 py-3 font-bold text-md">{{ $type }} ({{ $policyGroup->count() }})
+                            <td class="px-5 py-4 capitalize font-bold text-md">
+                                {{ $type }} ({{ $policyGroup->count() }})
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <table class="w-full border-l border-r py-1 text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-md text-gray-700 border-b bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <table class="w-full border-l py-1 text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-md text-gray-500 border-b bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-14 py-3">Name</th>
-                            <th scope="col" class="px-6 py-3">Status</th>
+                            <th scope="col" class="text-left pl-14 py-3">Name</th>
+                            <th scope="col" class="py-3">Status</th>
                             <th scope="col" class="px-6 py-3">Type (single / group)</th>
                             <th scope="col" class="px-6 py-3">Last Modified</th>
                         </tr>
                     </thead>
-                    <tbody class="text-md text-left text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-400 border-">
+                    <tbody class="text-md text-left text-gray-500 bg-white dark:bg-gray-700 dark:text-gray-400 border-">
                         @foreach ($policyGroup as $policy)
                             <tr
-                                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td class="px-14 py-3 font-medium text-blue-500 whitespace-nowrap dark:text-white">
-                                    <a href="#">{{ $policy->name }}</a>
+                                class="bg-white border-b text-left dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td class="px-14 font-medium capitalize text-blue-500 whitespace-nowrap dark:text-white" width="40%">
+                                    <a href="#">{{ $policy->name }} - {{ $type }}</a>
+                                </td>
+                                <td class=" py-3 text-left font-medium whitespace-nowrap dark:text-white" width="20%">
+                                    <i class="fa-solid fa-circle-check" style="color: #4f33dd;"></i>&nbsp;<a
+                                        href="#">{{ $policy->enabled ? '  Endforced' : 'Disabled' }}</a>
                                 </td>
                                 <td class="px-6 py-3 font-medium whitespace-nowrap dark:text-white">
-                                    <i class="fas fa-check text-green-500"></i>&nbsp;<a
-                                        href="#">{{ $policy->enabled ? 'Enabled' : 'Disabled' }}</a>
-                                </td>
-                                <td class="px-6 py-3 text-left font-medium whitespace-nowrap dark:text-white">
                                     <a href="#">
-                                        -
+                                        @if($policy->computer_count > 0)
+                                            Computer ({{ $policy->computer_count > 0 ? $policy->computer_count : '0' }} / {{ $policy->group_count > 0 ? $policy->group_count : '0' }})
+                                        @endif
+                                        @if($policy->user_count > 0)
+                                            User ({{ $policy->user_count > 0 ? $policy->user_count : '0' }} / {{ $policy->group_count > 0 ? $policy->group_count : '0' }})
+                                        @endif
                                     </a>
                                 </td>
                                 <td class="px-6 py-3 font-medium whitespace-nowrap dark:text-white">

@@ -6,6 +6,7 @@ use App\Models\Computer;
 use App\Models\Event;
 use App\Models\Policy;
 use App\Models\PolicySetting;
+use App\Models\ShUser;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -349,6 +350,70 @@ class SophosHelper
         }
 
         return $requestPolicies;
+    }
+
+
+    public function getUsers()
+    {
+        $tenant = Tenant::first();
+        $requestUsers = Http::baseUrl('https://api-au01.central.sophos.com')
+            ->withToken($this->setting()->access_token)
+            ->withHeader('X-Tenant-ID', $tenant->id_tenant)
+            ->get('/common/v1/directory/users');
+
+        $error = $requestUsers->json()['error'] ?? null;
+        if ($error == 'Unauthorized') {
+            $token = $this->createToken();
+            SettingHelper::setByKey('access_token', $token->json()['access_token'] ?? null);
+            $requestUsers = Http::baseUrl('https://api-au01.central.sophos.com')
+                ->withToken($this->setting()->access_token)
+                ->withHeader('X-Tenant-ID', $tenant->id_tenant)
+                ->get('/common/v1/directory/users');
+
+                if ($requestUsers->ok()) {
+                    $items = collect($requestUsers->json()['items']);
+                    foreach ($items as $item) {
+                        ShUser::updateorCreate([
+                            'id_user' => $item['id']
+                         ],[
+                            'id_user' => $item['id'],
+                            'name' => $item['name'],
+                            'first_name' => $item['firstName'] ?? null,
+                            'last_name' => $item['lastName'] ?? null,
+                            'email' => $item['email'] ?? null,
+                            'exchange_login' => $item['exchangeLogin'] ?? null,
+                            'groups' => $item['groups'],
+                            'tenant_id' => $item['tenant']['id'],
+                            'source_type' => $item['source']['type'],
+                            'createdAt' => Carbon::parse($item['createdAt'])->format('Y-m-d H:i:s'),
+                            'updatedAt' => Carbon::parse($item['updatedAt'])->format('Y-m-d H:i:s'),
+                        ]);
+                    }
+                }
+            return $requestUsers;
+        }
+
+        if ($requestUsers->ok()) {
+            $items = collect($requestUsers->json()['items']);
+            foreach ($items as $item) {
+                ShUser::updateorCreate([
+                    'id_user' => $item['id']
+                 ],[
+                    'id_user' => $item['id'],
+                    'name' => $item['name'],
+                    'first_name' => $item['firstName'] ?? null,
+                    'last_name' => $item['lastName'] ?? null,
+                    'email' => $item['email'] ?? null,
+                    'exchange_login' => $item['exchangeLogin'] ?? null,
+                    'groups' => $item['groups'],
+                    'tenant_id' => $item['tenant']['id'],
+                    'source_type' => $item['source']['type'],
+                    'createdAt' => Carbon::parse($item['createdAt'])->format('Y-m-d H:i:s'),
+                    'updatedAt' => Carbon::parse($item['updatedAt'])->format('Y-m-d H:i:s'),
+                ]);
+            }
+        }
+        return $requestUsers;
     }
 
 
