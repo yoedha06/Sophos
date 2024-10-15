@@ -11,7 +11,6 @@ use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class SophosHelper
 {
@@ -140,27 +139,28 @@ class SophosHelper
 
         return $requestEndpoint;
     }
+    
     public function getEvent()
     {
         $tenant = Tenant::first();
-        $requestEndpoint = Http::baseUrl('https://api-au01.central.sophos.com')
+        $requestEvent = Http::baseUrl('https://api-au01.central.sophos.com')
             ->withToken($this->setting()->access_token)
             ->withHeader('X-Tenant-ID', $tenant->id_tenant)
             ->get('/siem/v1/events');
 
-        $error = $requestEndpoint->json()['error'] ?? null;
+        $error = $requestEvent->json()['error'] ?? null;
         if ($error == 'Unauthorized') {
 
             $token = $this->createToken();
 
             SettingHelper::setByKey('access_token', $token->json()['access_token'] ?? null);
-            $requestEndpoint = Http::baseUrl('https://api-au01.central.sophos.com')
+            $requestEvent = Http::baseUrl('https://api-au01.central.sophos.com')
                 ->withToken($this->setting()->access_token)
                 ->withHeader('X-Tenant-ID', $tenant->id_tenant)
                 ->get('/siem/v1/events');
 
-            if ($requestEndpoint->ok()) {
-                $items = collect($requestEndpoint->json()['items']);
+            if ($requestEvent->ok()) {
+                $items = collect($requestEvent->json()['items']);
                 foreach ($items as $item)
                     Event::updateOrCreate([
                         'id_event' => $item['id'],
@@ -183,8 +183,8 @@ class SophosHelper
             }
         }
 
-        if ($requestEndpoint->ok()) {
-            $items = collect($requestEndpoint->json()['items']);
+        if ($requestEvent->ok()) {
+            $items = collect($requestEvent->json()['items']);
             foreach ($items as $item)
                 Event::updateOrCreate([
                     'id_event' => $item['id'],
@@ -206,30 +206,30 @@ class SophosHelper
                 ]);
         }
 
-        return $requestEndpoint;
+        return $requestEvent;
     }
 
     public function getSettingPolicy()
     {
         $tenant = Tenant::first();
-        $requestEndpoint = Http::baseUrl('https://api-au01.central.sophos.com')
+        $requestSetting = Http::baseUrl('https://api-au01.central.sophos.com')
             ->withToken($this->setting()->access_token)
             ->withHeader('X-Tenant-ID', $tenant->id_tenant)
             ->get('/endpoint/v1/policies/settings');
 
-        $error = $requestEndpoint->json()['error'] ?? null;
+        $error = $requestSetting->json()['error'] ?? null;
         if ($error == 'Unauthorized') {
 
             $token = $this->createToken();
 
             SettingHelper::setByKey('access_token', $token->json()['access_token'] ?? null);
-            $requestEndpoint = Http::baseUrl('https://api-au01.central.sophos.com')
+            $requestSetting = Http::baseUrl('https://api-au01.central.sophos.com')
                 ->withToken($this->setting()->access_token)
                 ->withHeader('X-Tenant-ID', $tenant->id_tenant)
                 ->get('/endpoint/v1/policies/settings');
 
-            if ($requestEndpoint->ok()) {
-                $items = collect($requestEndpoint->json()['items']);
+            if ($requestSetting->ok()) {
+                $items = collect($requestSetting->json()['items']);
                 foreach ($items as $item) {
                     $policyItems = $item['items'];
                     foreach ($policyItems as $policyItem) {
@@ -259,8 +259,8 @@ class SophosHelper
             }
         }
 
-        if ($requestEndpoint->ok()) {
-            $items = collect($requestEndpoint->json()['items']);
+        if ($requestSetting->ok()) {
+            $items = collect($requestSetting->json()['items']);
             foreach ($items as $item) {
                 $policyItems = $item['items'];
 
@@ -291,7 +291,7 @@ class SophosHelper
             }
         }
 
-        return $requestEndpoint;
+        return $requestSetting;
     }
 
     public function getPolicies()
@@ -334,6 +334,8 @@ class SophosHelper
                         DB::table('policy_computers')->updateOrInsert([
                             'policy_id' => $policy->id_policies,
                             'computer_id' => $endpointId,
+                            'created_at' => now(),
+                            'updated_at' => now()
                         ]);
                     }
                 }
@@ -343,6 +345,8 @@ class SophosHelper
                         DB::table('policy_users')->updateOrInsert([
                             'policy_id' => $policy->id_policies,
                             'user_id' => $userId,
+                            'created_at' => now(),
+                            'updated_at' => now()
                         ]);
                     }
                 }
@@ -351,7 +355,6 @@ class SophosHelper
 
         return $requestPolicies;
     }
-
 
     public function getUsers()
     {
@@ -415,7 +418,6 @@ class SophosHelper
         }
         return $requestUsers;
     }
-
 
     private function setting()
     {

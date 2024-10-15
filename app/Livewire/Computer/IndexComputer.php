@@ -10,18 +10,19 @@ use Livewire\Component;
 #[Layout('components.layouts.app')]
 class IndexComputer extends Component
 {
+    #[Title('Computers')]
     public $sortBy = 'created_at';
     public $sortDir = 'DESC'; 
 
-    #[Title('Computers')]
-    public function fecthComputer()
+
+    public function getEndpoint()
     {
-        return (new SophosHelper())->getUsers()->json();
+        return (new SophosHelper())->getEndpoint();
     }
 
     public function fecth()
     {
-        $this->fecthComputer();
+        $this->getEndpoint();
     }
 
     public function setSortBy($sortByField)

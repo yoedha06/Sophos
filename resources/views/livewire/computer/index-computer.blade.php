@@ -193,7 +193,7 @@
                             <input type="checkbox"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         </td>
-                        <td scope="row" class="px-18 py-10 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+                        <td scope="row" class="px-18 pr-2 py-10 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
                             @if($computer->health_overall_status == "good")
                                 <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                     <path fill="#00cc47" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/>
@@ -205,11 +205,35 @@
                                 {{ $computer->hostname }}
                             </a>                            
                         </td>                        
-                        <td class="px-1 py-4">
+                        <td class="px-1 py-4 relative" width="10%" x-data="{ open: false }">
                             @php
-                                $ips = collect($computer->ipv4_addresses);
+                                $ipv4_addresses = collect($computer->ipv4_addresses);
+                                $ipv6_addresses = collect($computer->ipv6_addresses);
                             @endphp
-                            {{ $ips->implode(', ') }}
+                
+                            @if ($ipv4_addresses->count() > 1 || $ipv6_addresses->count() > 0)
+                                <span @mouseenter="open = true" @mouseleave="open = false" class="cursor-pointer">
+                                    {{ $ipv4_addresses->first() }}, ...
+                                </span>
+                
+                                <div x-show="open" class="absolute z-10 w-64 p-3 bg-gray-800 text-white text-sm rounded-lg shadow-lg" style="display: none;">
+                                    @if ($ipv4_addresses->count() > 0)
+                                        <strong>IPv4 Addresses</strong><br>
+                                        @foreach ($ipv4_addresses as $ip)
+                                            {{ $ip }}<br>
+                                        @endforeach
+                                    @endif
+                
+                                    @if ($ipv6_addresses->count() > 0)
+                                        <strong>IPv6 Addresses</strong><br>
+                                        @foreach ($ipv6_addresses as $ip)
+                                            {{ $ip }}<br>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            @else
+                                {{ $ipv4_addresses->first() }}
+                            @endif
                         </td>
                         
                         <td scope="row" class="px-3 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">

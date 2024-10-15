@@ -4,6 +4,7 @@ use App\Livewire\Computer\DetailComputer;
 use App\Livewire\Computer\IndexComputer as computer;
 use App\Livewire\Events\IndexEvent;
 use App\Livewire\Policies\CreatePolicies;
+use App\Livewire\Policies\EditPolicies;
 use App\Livewire\Policies\IndexPolicies;
 use App\Livewire\Policies\ListPolicies;
 use App\Livewire\Setting\Setting;
@@ -17,7 +18,9 @@ Route::get('/events/{id_computer}', IndexEvent::class)->name('events.computer');
 Route::get('/status/{id_computer}', IndexStatus::class)->name('status.computer');
 
 Route::get('/policies/list', ListPolicies::class)->name('policies.list');
-Route::get('/policies/{id_computer}', IndexPolicies::class)->name('policies.computer');
 Route::get('/policies/create', CreatePolicies::class)->name('policies.create');
+Route::get('/policies/{id_policies}', EditPolicies::class)->name('policies.edit');
+Route::get('/policies-computer/{id_computer}', IndexPolicies::class)->name('policies.computer');
 
 Route::get('/setting', Setting::class)->name('setting');
+

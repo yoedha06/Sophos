@@ -15,7 +15,7 @@
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-circle-check"></i>&nbsp;Status
                     </a>
-                    <a wire:navigate href="/policies/{{ $computer->id_computer }}" id="tab-policies"
+                    <a wire:navigate href="/policies-computer/{{ $computer->id_computer }}" id="tab-policies"
                         class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400">
                         <i class="fa-solid fa-shield-halved"></i>&nbsp;Policies
                     </a>

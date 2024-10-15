@@ -64,7 +64,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="text-md text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-400 border-">
+                <tbody class="text-md text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-400">
                     @foreach ($policies as $policy)
                         <tr class="border-b border-r">
                             <td scope="col" class="px-6 py-3">Endpoint Protection: {{ $policy->type }}</td>

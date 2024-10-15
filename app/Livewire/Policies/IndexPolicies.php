@@ -15,7 +15,7 @@ class IndexPolicies extends Component
 {
     #[Title('Policies')]
     public $id_computer;
-    public Computer $computer;
+    public ?Computer $computer = null;
     public $policies = [];
 
     public function mount($id_computer)
@@ -23,10 +23,20 @@ class IndexPolicies extends Component
         $this->id_computer = $id_computer;
         $this->computer = Computer::where('id_computer', $this->id_computer)->first();
 
+        if (is_null($this->computer)) {
+            abort(404, 'Computer not found');
+        }
+
         $policyId = PolicyComputer::where('computer_id', $id_computer)->get()->pluck('policy_id')->implode(',');
-        $policy = Policy::whereIn('id_policies', explode(',', $policyId))->get();
-        $this->policies = $policy;
+
+        if (!empty($policyId)) {
+            $policy = Policy::whereIn('id_policies', explode(',', $policyId))->get();
+            $this->policies = $policy;
+        } else {
+            $this->policies = [];
+        }
     }
+
 
     public function fecthPolicies()
     {
