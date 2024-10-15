@@ -22,8 +22,8 @@ return new class extends Migration
             $table->json('groups');
             $table->string('tenant_id');
             $table->string('source_type');
-            $table->timestamp('createdAt');
-            $table->timestamp('updatedAt');
+            $table->datetime('createdAt')->nullable();
+            $table->datetime('updatedAt')->nullable();
             $table->timestamps();
         });
     }
