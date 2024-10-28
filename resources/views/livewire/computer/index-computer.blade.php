@@ -29,12 +29,12 @@
                             Computers
                         </button>
                         <button
-                            class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-l focus:outline-none hover:border-gray-400"
+                            class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent focus:outline-none hover:border-gray-400"
                             onclick="setActiveTab('unmanaged')">
                             <i class="fa-solid fa-circle-question"></i>&nbsp;
                             Unmanaged Computers
                         </button>
-                        <button
+                        <button wire:navigate href="/computer/group"
                             class="flex items-center py-2 px-4 font-semibold text-sm text-gray-700 bg-gray-200 border-transparent rounded-r focus:outline-none hover:border-gray-400"
                             onclick="setActiveTab('groups')">
                             <i class="fa-solid fa-user-group"></i>&nbsp;

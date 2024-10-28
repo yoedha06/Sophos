@@ -21,14 +21,9 @@ class DetailComputer extends Component
         $this->computer = Computer::where('id_computer', $this->id_computer)->first();
     }
 
-    public function fecthEvent()
-    {
-        return (new SophosHelper())->getEvent()->json();
-    }
-
     public function fecth()
     {
-       $this->fecthEvent();
+        (new SophosHelper())->getEvent()->json();
     }
     
     public function render()

@@ -5,6 +5,7 @@ namespace App\Livewire\Policies;
 use App\Helpers\SophosHelper;
 use App\Models\Policy;
 use App\Models\PolicyComputer;
+use App\Models\PolicyGrupComputer;
 use App\Models\PolicyUser;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
@@ -21,18 +22,12 @@ class ListPolicies extends Component
     public $search = '';
     public $id_policies;
 
-    public function fecthPolicies()
-    {
-        return (new SophosHelper())->getPolicies()->json();
-    }
-    public function fecthPolicySetting()
-    {
-        return (new SophosHelper())->getSettingPolicy()->json();
-    }
-
     public function fecth()
     {
-        $this->fecthPolicies();
+        (new SophosHelper())->getSettingPolicy()->json();
+        (new SophosHelper())->getPolicies()->json();
+
+        $this->redirectRoute('policies.list', navigate:true);
     }
 
     public function accessToken()
@@ -91,6 +86,7 @@ class ListPolicies extends Component
             foreach ($policyGroup as $policy) {
                 $policy->computer_count = PolicyComputer::where('policy_id', $policy->id_policies)->count();
                 $policy->user_count = PolicyUser::where('policy_id', $policy->id_policies)->count();
+                $policy->group_count = PolicyGrupComputer::where('policy_id', $policy->id_policies)->count();
             }
         }
         return view('livewire.policies.list-policies', [

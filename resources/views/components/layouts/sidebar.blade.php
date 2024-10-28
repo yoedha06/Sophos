@@ -14,7 +14,7 @@
         </div>
         <div x-data="{ open: false }" @click.outside="open = false" class="relative">
             <button @click="open = !open" class="flex items-center text-white focus:outline-none">
-                <img class="w-8 h-8 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                <img class="w-8 h-8 rounded-full object-cover" src="{{ asset('assets/img/sophos.png') }}"
                     alt="Profile Picture">
                 <div class="ms-3 text-left">
                     <div class="text-sm font-semibold">CIGS</div>

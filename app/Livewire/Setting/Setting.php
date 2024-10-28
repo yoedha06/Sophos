@@ -4,7 +4,6 @@ namespace App\Livewire\Setting;
 
 use App\Helpers\SettingHelper;
 use App\Helpers\SophosHelper;
-use App\Models\Setting as ModelsSetting;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;

@@ -14,15 +14,9 @@ class IndexComputer extends Component
     public $sortBy = 'created_at';
     public $sortDir = 'DESC'; 
 
-
-    public function getEndpoint()
-    {
-        return (new SophosHelper())->getEndpoint();
-    }
-
     public function fecth()
     {
-        $this->getEndpoint();
+        (new SophosHelper())->getEndpoint();
     }
 
     public function setSortBy($sortByField)

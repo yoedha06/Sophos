@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    <div class="max-w-screen-xl">
+    <div class="max-w-screen-xl min-h-screen">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-t">
             <thead class="bg-white">
                 <tr>

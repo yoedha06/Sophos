@@ -42,4 +42,9 @@ class Computer extends Model
     {
         return $this->belongsToMany(Policy::class, 'policy_computers', 'computer_id', 'policy_id');
     }
+
+    public function groupComputer()
+    {
+        return $this->hasOne(GroupComputer::class, 'computer_id', 'id_computer');
+    }
 }

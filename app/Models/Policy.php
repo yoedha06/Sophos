@@ -33,4 +33,9 @@ class Policy extends Model
     {
         return $this->belongsToMany(Computer::class, 'policy_computers', 'policy_id', 'computer_id');
     }
+
+    public function policyGroupComputers()
+    {
+        return $this->hasMany(PolicyGrupComputer::class, 'policy_id', 'id_policies');
+    }
 }

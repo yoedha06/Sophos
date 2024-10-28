@@ -37,21 +37,14 @@ class IndexPolicies extends Component
         }
     }
 
-
-    public function fecthPolicies()
-    {
-        return (new SophosHelper())->getPolicies()->json();
-    }
-    public function fecthPolicySetting()
-    {
-        return (new SophosHelper())->getSettingPolicy()->json();
-    }
-
     public function fecth()
     {
-        $this->fecthPolicySetting();
-        $this->fecthPolicies();
+        (new SophosHelper())->getSettingPolicy()->json();
+        (new SophosHelper())->getPolicies()->json();
+
+        $this->redirectRoute('policies.computer', $this->id_computer, navigate:true);
     }
+    
     public function render()
     {
         return view('livewire.policies.index-policies', [

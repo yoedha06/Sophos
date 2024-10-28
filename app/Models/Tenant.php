@@ -33,4 +33,9 @@ class Tenant extends Model
     {
         return $this->hasMany(ShUser::class);
     }
+
+    public function groupComputer()
+    {
+        return $this->hasMany(Group::class);
+    }
 }

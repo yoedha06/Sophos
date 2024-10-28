@@ -26,14 +26,12 @@ class IndexStatus extends Component
         }
     }
 
-    public function fecthEvent()
-    {
-        return (new SophosHelper())->getEvent()->json();
-    }
-
     public function fecth()
     {
-        $this->fecthEvent();
+        (new SophosHelper())->getEvent()->json();
+
+        $this->redirectRoute('status.computer', $this->id_computer, navigate:true);
+
     }
     public function render()
     {

@@ -4,8 +4,10 @@ namespace App\Livewire\Policies;
 
 use App\Helpers\SophosHelper;
 use App\Models\Computer;
+use App\Models\Group;
 use App\Models\Policy;
 use App\Models\PolicyComputer;
+use App\Models\PolicyGrupComputer;
 use App\Models\PolicyUser;
 use App\Models\ShUser;
 use App\Models\Tenant;
@@ -22,10 +24,13 @@ class EditPolicies extends Component
     public $name;
     public $selectedEndpoints = [];
     public $selectedUsers = [];
+    public $selectedGroupComputers = [];
     public $applyEndpoints = false;
     public $applyUsers = false;
+    public $applyGroupComputers = false;
     public $searchUsers = '';
     public $searchDevice = '';
+    public $searchGroupComputer = '';
 
     public function mount($id_policies)
     {
@@ -38,18 +43,21 @@ class EditPolicies extends Component
             $this->name = $policy->name;
             $this->selectedEndpoints = PolicyComputer::where('policy_id', $this->id)->pluck('computer_id')->toArray();
             $this->selectedUsers = PolicyUser::where('policy_id', $this->id)->pluck('user_id')->toArray();
+            $this->selectedGroupComputers = PolicyGrupComputer::where('policy_id', $this->id)->pluck('group_id')->toArray();
 
             if (count($this->selectedEndpoints) > 0) {
                 $this->applyEndpoints = true;
+                $this->applyGroupComputers = true;
             } else if (count($this->selectedUsers) > 0) {
                 $this->applyUsers = true;
             } else {
                 $this->applyEndpoints = false;
                 $this->applyUsers = false;
             }
+                
         }
     }
-
+    
     public function accessToken()
     {
         return (new SophosHelper())->createToken()->json()['access_token'];
@@ -70,14 +78,22 @@ class EditPolicies extends Component
 
             if ($this->applyEndpoints && count($this->selectedEndpoints) > 0) {
                 $appliesTo['endpoints'] = $this->selectedEndpoints;
+                if ($this->applyGroupComputers) {
+                    $appliesTo['endpointGroups'] = $this->selectedGroupComputers;
+                }
             } elseif ($this->applyUsers && count($this->selectedUsers) > 0) {
                 $appliesTo['users'] = $this->selectedUsers;
+            } elseif ($this->applyGroupComputers) {
+                $appliesTo['endpoints'] = [];
+                $appliesTo['endpointGroups'] = $this->selectedGroupComputers;
             }
 
             $payload = [
                 'name' => $this->name,
                 'appliesTo' => $appliesTo,
             ];
+
+            dd($payload);
 
             $patch = Http::baseUrl('https://api-au01.central.sophos.com')
                 ->withToken($token)
@@ -91,6 +107,29 @@ class EditPolicies extends Component
                         'id_policies' =>$this->id,
                         'name' => $this->name,
                     ]);
+
+                    if (isset($patch->json()['appliesTo']['endpointGroups'])) {
+                        $groupComputers = $patch->json()['appliesTo']['endpointGroups'];
+
+                        DB::table('policy_grup_computers')
+                            ->where('policy_id', $this->id)
+                            ->whereNotIn('group_id', $groupComputers)
+                            ->delete();
+
+                        foreach ($groupComputers as $groupComputer) {
+                            DB::table('policy_grup_computers')
+                                ->updateOrInsert([
+                                    'policy_id' => $this->id,
+                                    'group_id' => $groupComputer,
+                                ],[
+                                    'policy_id' => $this->id,
+                                    'group_id' => $groupComputer,
+                                    'created_at' => now(),
+                                    'updated_at' => now(),
+                                ]
+                            );
+                        } 
+                    }
 
                     if (isset($patch->json()['appliesTo']['endpoints'])) {
                         $computer = $patch->json()['appliesTo']['endpoints'];
@@ -152,14 +191,15 @@ class EditPolicies extends Component
         }
     }
 
-
     public function render()
     {
         return view('livewire.policies.edit-policies', [
             'users' => ShUser::where('name', 'like', '%' . $this->searchUsers . '%')->get(),
             'computers' => Computer::where('hostname', 'like', '%' . $this->searchDevice . '%')->get(),
+            'groupComputers' => Group::where('name', 'like', '%' . $this->searchGroupComputer . '%')->get(),
             'countComputer' => Computer::count(),
             'countUsers' => ShUser::count(),
+            'countGroupComputer' => Group::count(),
         ]);
     }
 }

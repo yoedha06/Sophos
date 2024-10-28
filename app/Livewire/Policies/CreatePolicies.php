@@ -5,8 +5,10 @@ namespace App\Livewire\Policies;
 use App\Helpers\SettingHelper;
 use App\Helpers\SophosHelper;
 use App\Models\Computer;
+use App\Models\Group;
 use App\Models\Policy;
 use App\Models\PolicyComputer;
+use App\Models\PolicyGrupComputer;
 use App\Models\PolicyUser;
 use App\Models\ShUser;
 use App\Models\Tenant;
@@ -24,20 +26,24 @@ class CreatePolicies extends Component
     public $type;
     public $name;
     public $group;
+    public $groupComputer;
+    public $searchGrupComputer = '';
     public $searchDevice = '';
     public $searchUser = '';
     public $selectedEndpoints = [];
     public $selectedUsers = [];
+    public $selectedGroupComputers = [];
     public $settings;
     public $settingType = false;
     
     protected $rules = [    
         'type' => 'required',
         'name' => 'required',
-        'group' => 'required',
-        'selectedEndpoints' => 'required_without:selectedUsers',
-        'selectedUsers' => 'required_without:selectedEndpoints',
-    ];
+        'group' => 'required_without_all:selectedEndpoints,selectedUsers,selectedGroupComputers',
+        'selectedEndpoints' => 'required_without_all:group,selectedUsers,selectedGroupComputers',
+        'selectedUsers' => 'required_without_all:group,selectedEndpoints,selectedGroupComputers',
+        'selectedGroupComputers' => 'required_without_all:group,selectedEndpoints,selectedUsers',
+    ];    
 
     public function updatedType($value)
     {
@@ -68,9 +74,15 @@ class CreatePolicies extends Component
                 if ($this->group === 'device' && !empty($this->selectedEndpoints)) {
                     $this->selectedUsers = [];
                     $appliesTo['endpoints'] = $this->selectedEndpoints;
+                    if ($this->groupComputer === 'endpoints' && !empty($this->selectedGroupComputers)) {
+                        $appliesTo['endpointGroups'] = $this->selectedGroupComputers;
+                    }
                 } elseif ($this->group === 'user' && !empty($this->selectedUsers)) {
                     $this->selectedEndpoints = []; 
                     $appliesTo['users'] = $this->selectedUsers;
+                } elseif ($this->groupComputer === 'endpoints' && !empty($this->selectedGroupComputers)) {
+                    $appliesTo['endpoints'] = [];
+                    $appliesTo['endpointGroups'] = $this->selectedGroupComputers;
                 }
 
                 $payload = [
@@ -85,6 +97,7 @@ class CreatePolicies extends Component
                     ->post('/endpoint/v1/policies', $payload);
 
                 $responseData = $post->json();
+                logger($responseData);
 
                 if ($post->failed() && $responseData['error'] === 'Unauthorized') {
                     $token = $this->accessToken();
@@ -115,6 +128,16 @@ class CreatePolicies extends Component
                         'settings' => json_encode($responseData['settings']),
                     ]);
 
+                        if (isset($responseData['appliesTo']['endpointGroups'])) {
+                            $computerGroups = $responseData['appliesTo']['endpointGroups'];
+
+                            foreach ($computerGroups as $computerGroup){
+                                PolicyGrupComputer::create([
+                                    'policy_id' => $responseData['id'],
+                                    'group_id' => $computerGroup
+                                ]);
+                            }
+                        }
                         if (isset($responseData['appliesTo']['endpoints'])) {
                             $computers = $responseData['appliesTo']['endpoints'];
 
@@ -151,7 +174,7 @@ class CreatePolicies extends Component
 
     public function applies()
     {
-        $this->reset(['selectedEndpoints', 'selectedUsers']);
+        $this->reset(['selectedEndpoints', 'selectedUsers', 'selectedGroupComputers']);
     }
 
     public function render()
@@ -161,7 +184,9 @@ class CreatePolicies extends Component
             'users' => ShUser::where('name', 'like', '%' . $this->searchUser . '%')->get(),
             'computers' => Computer::count(),
             'user' => ShUser::count(),
-            'settings' => $this->settings
+            'settings' => $this->settings,
+            'groupComputers' => Group::where('name', 'like', '%' . $this->searchGrupComputer . '%')->get(),
+            'groupCount' => Group::count()
         ]);
     }
 }

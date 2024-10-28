@@ -4,13 +4,19 @@ namespace App\Helpers;
 
 use App\Models\Computer;
 use App\Models\Event;
+use App\Models\Group;
+use App\Models\GroupComputer;
 use App\Models\Policy;
+use App\Models\PolicyComputer;
+use App\Models\PolicyGrupComputer;
 use App\Models\PolicySetting;
+use App\Models\PolicyUser;
 use App\Models\ShUser;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\Rules\Exists;
 
 class SophosHelper
 {
@@ -311,6 +317,66 @@ class SophosHelper
                 ->withToken($this->setting()->access_token)
                 ->withHeader('X-Tenant-ID', $tenant->id_tenant)
                 ->get('/endpoint/v1/policies');
+
+            
+            if ($requestPolicies->ok()) {
+                $items = collect($requestPolicies->json()['items']);
+                foreach ($items as $item) {
+                    Policy::updateOrCreate([
+                        'id_policies' => $item['id'],
+                    ], [
+                        'id_policies' => $item['id'],
+                        'name' => $item['name'],
+                        'type' => $item['type'],
+                        'locked_by_managing_account' => $item['lockedByManagingAccount'],
+                        'priority' => $item['priority'],
+                        'tenant_id' => $item['tenant']['id'],
+                        'enabled' => $item['enabled'],
+                        'settings' => json_encode($item['settings']),
+                    ]);
+
+                    if (isset($item['appliesTo']['endpointGroups']) && is_array($item['appliesTo']['endpointGroups'])) {
+                        foreach ($item['appliesTo']['endpointGroups'] as $endpointGroups) {
+                            PolicyGrupComputer::updateOrCreate([
+                                'policy_id' => $item['id'],
+                                'group_id' => $endpointGroups
+                            ],[
+                                'policy_id' => $item['id'],
+                                'group_id' => $endpointGroups
+                            ]);
+                        }
+                    }
+
+                    if (isset($item['appliesTo']['endpoints']) && is_array($item['appliesTo']['endpoints'])) {
+                        foreach ($item['appliesTo']['endpoints'] as $endpointId) {
+                            PolicyComputer::updateOrCreate([
+                                'policy_id' => $item['id'],
+                                'computer_id' => $endpointId
+                            ],[
+                                'policy_id' => $item['id'],
+                                'computer_id' => $endpointId,
+                                'created_at' => now(),
+                                'updated_at' => now()
+                            ]);
+                        }
+                    }
+
+                    if (isset($item['appliesTo']['users']) && is_array($item['appliesTo']['users'])) {
+                        foreach ($item['appliesTo']['users'] as $userId) {
+                            PolicyUser::updateOrCreate([
+                                'policy_id' => $item['id'],
+                                'user_id' => $userId
+                            ],[
+                                'policy_id' => $item['id'],
+                                'user_id' => $userId,
+                                'created_at' => now(),
+                                'updated_at' => now()
+                            ]);
+                        }
+                    }
+                }
+            }
+            return $requestPolicies;
         }
 
         if ($requestPolicies->ok()) {
@@ -329,10 +395,25 @@ class SophosHelper
                     'settings' => json_encode($item['settings']),
                 ]);
 
+                if (isset($item['appliesTo']['endpointGroups']) && is_array($item['appliesTo']['endpointGroups'])) {
+                    foreach ($item['appliesTo']['endpointGroups'] as $endpointGroups) {
+                        PolicyGrupComputer::updateOrCreate([
+                            'policy_id' => $item['id'],
+                            'group_id' => $endpointGroups
+                        ],[
+                            'policy_id' => $item['id'],
+                            'group_id' => $endpointGroups
+                        ]);
+                    }
+                }
+
                 if (isset($item['appliesTo']['endpoints']) && is_array($item['appliesTo']['endpoints'])) {
                     foreach ($item['appliesTo']['endpoints'] as $endpointId) {
                         DB::table('policy_computers')->updateOrInsert([
-                            'policy_id' => $policy->id_policies,
+                            'policy_id' => $item['id'],
+                            'computer_id' => $endpointId
+                        ],[
+                            'policy_id' => $item['id'],
                             'computer_id' => $endpointId,
                             'created_at' => now(),
                             'updated_at' => now()
@@ -343,7 +424,10 @@ class SophosHelper
                 if (isset($item['appliesTo']['users']) && is_array($item['appliesTo']['users'])) {
                     foreach ($item['appliesTo']['users'] as $userId) {
                         DB::table('policy_users')->updateOrInsert([
-                            'policy_id' => $policy->id_policies,
+                            'policy_id' => $item['id'],
+                            'user_id' => $userId
+                        ],[
+                            'policy_id' => $item['id'],
                             'user_id' => $userId,
                             'created_at' => now(),
                             'updated_at' => now()
@@ -352,7 +436,6 @@ class SophosHelper
                 }
             }
         }
-
         return $requestPolicies;
     }
 
@@ -417,6 +500,86 @@ class SophosHelper
             }
         }
         return $requestUsers;
+    }
+
+    public function getGroupComputer()
+    {
+        $tenant = Tenant::first();
+        $getGroups = Http::baseUrl('https://api-au01.central.sophos.com')
+            ->withToken($this->setting()->access_token)
+            ->withHeader('X-Tenant-ID', $tenant->id_tenant)        
+            ->get('/endpoint/v1/endpoint-groups');
+
+            $error = $getGroups->json()['error'] ?? null;
+            if ($error == 'Unauthorized') {
+                $token = $this->createToken();
+                SettingHelper::setByKey('access_token', $token->json()['access_token'] ?? null);
+                $getGroups = Http::baseUrl('https://api-au01.central.sophos.com')
+                    ->withToken($this->setting()->access_token)
+                    ->withHeader('X-Tenant-ID', $tenant->id_tenant)      
+                    ->get('/endpoint/v1/endpoint-groups');
+
+                logger($getGroups->json());
+                if($getGroups->ok()) {
+                    $items = collect($getGroups->json()['items']);
+                    foreach($items as $item) {
+                        Group::updateOrCreate([
+                            'id_group' => $item['id'],
+                        ],[
+                            'id_group' => $item['id'],
+                            'tenant_id' => $item['tenant']['id'],
+                            'name' => $item['name'],
+                            'description' => $item['description'] ?? null,
+                            'type' => $item['type'],
+                            'total_assigned' => $item['endpoints']['total'] ?? null
+                        ]);
+            
+                        if (!empty($item['endpoints']['items'])) {
+                            foreach ($item['endpoints']['items'] as $endpoint) {
+                                GroupComputer::updateOrCreate([
+                                    'group_id' => $item['id'] ?? null,
+                                ],[
+                                    'group_id' => $item['id'] ?? null,
+                                    'hostname' => $endpoint['hostname'] ?? null,
+                                    'computer_id' => $endpoint['id'] ?? null,
+                                ]);
+                            }
+                        }
+                    }
+                }
+            return $getGroups;
+        }
+
+        if($getGroups->ok()) {
+            $items = collect($getGroups->json()['items']);
+            foreach($items as $item) {
+                Group::updateOrCreate([
+                    'id_group' => $item['id'],
+                ],[
+                    'id_group' => $item['id'],
+                    'tenant_id' => $item['tenant']['id'],
+                    'name' => $item['name'],
+                    'description' => $item['description'] ?? null,
+                    'type' => $item['type'],
+                    'total_assigned' => $item['endpoints']['total'] ?? null
+                ]);
+    
+                if (!empty($item['endpoints']['items'])) {
+                    foreach ($item['endpoints']['items'] as $endpoint) {
+                        GroupComputer::updateOrCreate([
+                            'group_id' => $item['id'] ?? null,
+                        ],[
+                            'group_id' => $item['id'] ?? null,
+                            'hostname' => $endpoint['hostname'] ?? null,
+                            'computer_id' => $endpoint['id'] ?? null,
+                        ]);
+                    }
+                }
+            }
+        }
+        
+        logger($getGroups->json());
+        return $getGroups;
     }
 
     private function setting()

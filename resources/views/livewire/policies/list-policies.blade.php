@@ -60,9 +60,11 @@
                             </div>
                         </form>
                     </th>
+                    @if(count($policies) > 0)
                     <th scope="col" class="px-6 py-4 float-end">
                         <a href="/policies/create" wire:navigate class="bg-blue-700 py-1 px-2 rounded-lg mr-5 text-white">Add Policy</a>
                     </th>
+                    @endif
                 </tr>
             </thead>
         </table>
@@ -112,7 +114,7 @@
                                 </td>
                                 <td class="px-6 py-3 font-medium whitespace-nowrap dark:text-white">
                                     <a href="#">
-                                        @if($policy->computer_count > 0)
+                                        @if($policy->computer_count > 0 || $policy->group_count > 0)
                                             Computer ({{ $policy->computer_count > 0 ? $policy->computer_count : '0' }} / {{ $policy->group_count > 0 ? $policy->group_count : '0' }})
                                         @endif
                                         @if($policy->user_count > 0)

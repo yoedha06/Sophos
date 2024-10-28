@@ -27,15 +27,12 @@ class IndexEvent extends Component
         $this->id_computer = $id_computer;
         $this->computer = Computer::where('id_computer', $this->id_computer)->first();
     }
-
-    public function fecthEvent()
-    {
-        return (new SophosHelper())->getEvent()->json();
-    }
     
     public function fecth()
     {
-        $this->fecthEvent();
+        (new SophosHelper())->getEvent()->json();
+
+        $this->redirectRoute('events.computer', $this->id_computer, navigate:true);
     }
 
     public function filterByDateRange()

@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    <div class="max-w-screen-xl ml-5">
+    <div class="max-w-screen-xl ml-5 min-h-screen">
         <span class="text-xl ml-5 mt-32 py-4 mb-5">Security Health</span>
         <div class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <div x-data="{ open: true }" class="rounded-md p-2">
