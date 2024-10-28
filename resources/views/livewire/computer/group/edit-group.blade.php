@@ -60,7 +60,7 @@
                     <div
                         class="flex justify-between w-full rounded-tr-md rounded-tl-md py-3 font-bold bg-gradient-to-r from-violet-800 to-black text-white">
                         <span class="mx-4 text-md">Available Computers</span>
-                        <span class="mx-4 text-md">{{ $computersAvailable->count()  }}</span>
+                        <span class="mx-4 text-md">{{ $computers->count()  }}</span>
                     </div>
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-md text-center text-gray-700 capitalize bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -105,22 +105,41 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($computersAvailable as $computer)
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row"
-                                        class="text-center py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <input type="checkbox" wire:model="endpointIds" value="{{ $computer->id_computer }}" checked
-                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    </td>
-                                    <td class="font-medium flex py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
-                                        </svg>{{ $computer->hostname }}
-                                    </td>
-                                </tr>
-                            @endforeach
+                            @if ($existEndpoints == false)
+                                @foreach($computers as $computer)
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <td scope="row"
+                                            class="text-center py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <input type="checkbox" wire:model="endpointIds" value="{{ $computer->id_computer }}" checked
+                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        </td>
+                                        <td class="font-medium flex py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+                                            </svg>{{ $computer->hostname }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                @foreach($computersAvailable as $computer)
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <td scope="row"
+                                            class="text-center py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <input type="checkbox" wire:model="endpointIds" value="{{ $computer->id_computer }}" checked
+                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        </td>
+                                        <td class="font-medium flex py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+                                            </svg>{{ $computer->hostname }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>

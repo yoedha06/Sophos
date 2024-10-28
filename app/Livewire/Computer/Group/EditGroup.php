@@ -19,6 +19,7 @@ class EditGroup extends Component
     public $description;
     public $search = '';
     public $endpointIds = [];
+    public $existEndpoints = true;
 
     protected $rules = [
         'name' => 'required|min:3',
@@ -32,6 +33,13 @@ class EditGroup extends Component
         $this->name = $group->name;
         $this->description = $group->description;
         $this->endpointIds = GroupComputer::where('group_id', $this->id)->pluck('computer_id')->toArray();
+
+        if (!empty($this->endpointIds)){
+            $this->existEndpoints = false;
+        } else {
+            $this->existEndpoints = true;
+        }
+
     }
 
     public function update()
@@ -129,9 +137,9 @@ class EditGroup extends Component
     public function render()
     {
         return view('livewire.computer.group.edit-group',[
+            'computers' => Computer::where('hostname', 'like', '%'. $this->search .'%')->get(),
             'computersAvailable' => Computer::doesntHave('groupComputer')
-                ->where('hostname', 'like', '%'. $this->search .'%')
-                ->get()
+                ->where('hostname', 'like', '%'. $this->search .'%')->get()
         ]);
     }
 }
